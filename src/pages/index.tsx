@@ -1,4 +1,7 @@
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth/next"
 import Link from "next/link";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 export default function Home() {
   return (
@@ -14,10 +17,29 @@ export default function Home() {
         >
           Entre
         </Link>
-        <Link href={"/register"} className="p-2 rounded-lg w-full text-black">
+        <Link href={"/register"} className="p-2 rounded-lg w-full flex justify-center items-center text-black">
           Cadastre-se
         </Link>
       </div>
     </main>
   );
+}
+
+export const getServerSideProps: GetServerSideProps = async ({req,res})=>{
+const session  = await getServerSession(req,res, authOptions)
+if (session?.user) {
+  return {
+    redirect: {
+      destination: "/home"
+    },
+    props:{}
+  }
+}
+
+return {
+  props:{}
+}
+
+
+
 }

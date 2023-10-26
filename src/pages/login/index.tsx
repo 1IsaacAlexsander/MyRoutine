@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { GoogleLogo } from "phosphor-react";
+import { signIn } from "next-auth/react";
+import { authOptions } from "../api/auth/[...nextauth]";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
 
 export default function Login() {
   return (
@@ -30,10 +34,30 @@ export default function Login() {
 
       <div className="flex flex-col gap-4">
         <p className="text-red-600 font-bold">Ou entre com</p>
-        <button className="bg-gray-300 flex justify-center items-center rounded-lg p-2 w-full">
+        <button onClick={()=>signIn('google')} className="bg-gray-300 flex justify-center items-center rounded-lg p-2 w-full">
           <GoogleLogo size={24} />
         </button>
       </div>
     </main>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({req,res})=>{
+  const session  = await getServerSession(req,res, authOptions)
+  if (session?.user) {
+    return {
+      redirect: {
+        destination: "/home"
+      },
+      props:{}
+    }
+  }
+    return {
+      props: {
+      }
+    }
+  
+  
+  
+  }
+  
